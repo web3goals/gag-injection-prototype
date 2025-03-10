@@ -3,6 +3,53 @@ import OpenAI from "openai";
 
 dotenv.config();
 
+async function generateCaptionAndPrompt() {
+  console.log("Generating caption and prompt...");
+
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const tweet =
+    'I finally got the "first shitty draft" of my book on paper. 114,000 words at the moment. Took way longer than expected. It will probably take another 3x effort to rewrite it. But at least I can get some help with that. So far, it\'s been a massive self brain dump exercise.😂';
+  const prompt = [
+    "I want to post a comment on Twitter with a funny picture that will attract a lot of people.",
+    "Read the following tweet and create a funny caption and prompt for DALL-E 3:",
+    tweet,
+  ].join("\n");
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "response_schema",
+        schema: {
+          type: "object",
+          properties: {
+            caption: {
+              description: "The caption",
+              type: "string",
+            },
+            prompt: {
+              description: "The prompt for DALL-E 3",
+              type: "string",
+            },
+          },
+          additionalProperties: false,
+        },
+      },
+    },
+    store: true,
+  });
+
+  console.log(completion.choices[0].message);
+}
+
 async function generateImage() {
   console.log("Generating image...");
 
@@ -22,8 +69,6 @@ async function generateImage() {
 
 async function main() {
   console.log("Starting...");
-
-  await generateImage();
 }
 
 main().catch((error) => {
