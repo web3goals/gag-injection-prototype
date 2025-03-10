@@ -8,5 +8,5 @@
 ## Example of `.env`
 
 ```
-
+OPENAI_API_KEY=""
 ```
