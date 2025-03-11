@@ -1,19 +1,55 @@
+import { Configuration, NeynarAPIClient } from "@neynar/nodejs-sdk";
 import dotenv from "dotenv";
 import OpenAI from "openai";
 
 dotenv.config();
+
+async function getPosts() {
+  console.log("Getting posts...");
+
+  const config = new Configuration({
+    apiKey: process.env.NEYNAR_API_KEY as string,
+  });
+
+  const client = new NeynarAPIClient(config);
+
+  const userResponse = await client.lookupUserByUsername({ username: "kiv1n" });
+
+  const feedResponse = await client.fetchCastsForUser({
+    fid: userResponse.user.fid,
+    limit: 10,
+  });
+  console.log(feedResponse);
+}
+
+async function postComment() {
+  console.log("Posting comment...");
+
+  const config = new Configuration({
+    apiKey: process.env.NEYNAR_API_KEY as string,
+  });
+
+  const client = new NeynarAPIClient(config);
+
+  const postCastResponse = await client.publishCast({
+    signerUuid: process.env.AGENT_SIGNER_UUID as string,
+    text: "Hello!",
+    parent: "0xc137da2fb72d3259653f071ef784c6d03fd8090e",
+  });
+  console.log(postCastResponse);
+}
 
 async function generateCaptionAndPrompt() {
   console.log("Generating caption and prompt...");
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  const tweet =
+  const post =
     'I finally got the "first shitty draft" of my book on paper. 114,000 words at the moment. Took way longer than expected. It will probably take another 3x effort to rewrite it. But at least I can get some help with that. So far, it\'s been a massive self brain dump exercise.😂';
   const prompt = [
-    "I want to post a comment on Twitter with a funny picture that will attract a lot of people.",
-    "Read the following tweet and create a funny caption and prompt for DALL-E 3:",
-    tweet,
+    "I want to post a comment on social media with a funny picture that will attract a lot of people.",
+    "Read the following post and create a funny caption and prompt for DALL-E 3:",
+    post,
   ].join("\n");
 
   const completion = await openai.chat.completions.create({

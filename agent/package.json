@@ -9,6 +9,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@neynar/nodejs-sdk": "^2.19.0",
     "dotenv": "^16.4.7",
     "openai": "^4.86.2"
   }

@@ -9,4 +9,6 @@
 
 ```
 OPENAI_API_KEY=""
+NEYNAR_API_KEY=""
+AGENT_SIGNER_UUID=""
 ```
