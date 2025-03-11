@@ -12,7 +12,11 @@ async function main() {
   const latestCast = casts[0];
 
   // Generate a caption and a prompt for image generation
-  const { caption, prompt } = await generateCaptionAndPrompt(latestCast.text);
+  const styles = ["kind and sweet", "provocative and sarcastic"];
+  const { caption, prompt } = await generateCaptionAndPrompt(
+    latestCast.text,
+    styles[0]
+  );
 
   // Generate an image
   const imageBase64String = await generateImage(prompt);

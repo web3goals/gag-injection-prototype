@@ -6,14 +6,16 @@ dotenv.config();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function generateCaptionAndPrompt(
-  post: string
+  post: string,
+  style: string
 ): Promise<{ caption: string; prompt: string }> {
   console.log("Generating caption and prompt...");
 
   const prompt = [
-    "I want to post a comment on social media with a funny picture that will attract a lot of people.",
-    "Read the following post and create a funny caption and prompt for DALL-E 3.",
-    "Caption must not contain hashtags.",
+    "I want to post a comment on social media with a funny image that will attract a lot of people.",
+    "Read the following post and create a caption for a comment and a prompt for DALL-E 3 to create an image.",
+    `Comment must be in a ${style} style.`,
+    "Don't use hashtags in the caption.",
     "Post:",
     post,
   ].join("\n");
