@@ -25,7 +25,8 @@ async function main() {
   const imageUrl = await uploadBase64String(imageBase64String);
 
   // Publish a reply cast
-  const link = "https://gag-injection.vercel.app/42";
+  const token = 42;
+  const link = `https://gag-injection.vercel.app/tokens/${token}`;
   const text = `${caption}\n\n${link}`;
   await publishReplyCast(latestCast.hash, text, imageUrl);
 }
