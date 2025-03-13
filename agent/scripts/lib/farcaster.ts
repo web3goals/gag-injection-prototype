@@ -10,17 +10,16 @@ const config = new Configuration({
 
 const client = new NeynarAPIClient(config);
 
-export async function getLatestCasts(
-  username: string,
-  limit: number
-): Promise<CastWithInteractions[]> {
-  console.log("Getting latest casts...");
+export async function getLatestCast(
+  username: string
+): Promise<CastWithInteractions> {
+  console.log("Getting latest cast...");
   const userResponse = await client.lookupUserByUsername({ username });
   const feedResponse = await client.fetchCastsForUser({
     fid: userResponse.user.fid,
-    limit: limit,
+    limit: 1,
   });
-  return feedResponse.casts;
+  return feedResponse.casts[0];
 }
 
 export async function publishReplyCast(
