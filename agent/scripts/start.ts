@@ -1,3 +1,5 @@
+import { parseEther } from "viem";
+import { createToken, listToken } from "./lib/contracts";
 import { getLatestCasts, publishReplyCast } from "./lib/farcaster";
 import { generateCaptionAndPrompt, generateImage } from "./lib/llm";
 import { uploadBase64String, uploadJson } from "./lib/pinata";
@@ -27,19 +29,28 @@ async function main() {
     await uploadBase64String(imageBase64String);
 
   // Upload a token metadata to IPFS
-  const { ipfsUrl: metadataIpfsUrl, httpUrl: metadataHttpUrl } =
-    await uploadJson({
-      name: caption,
-      image: imageIpfsUrl,
-    });
+  const { ipfsUrl: metadataIpfsUrl } = await uploadJson({
+    name: caption,
+    image: imageIpfsUrl,
+  });
 
   // Create a token
-  // TODO: Implement
+  const tokenAddress = "0x946D3AE183c6BD5a8310b188091109E87c10EEe4";
+  const tokenId = await createToken(tokenAddress, metadataIpfsUrl);
 
-  // Publish a reply cast
-  const contract = "0x0";
-  const token = 42;
-  const link = `https://gag-injection.vercel.app/tokens/${contract}/${token}`;
+  // List the token in the marketplace
+  const marketplaceAddress = "0xfe0aed5cbee89869ff505e10a5ebb75e9fc819d7";
+  const beneficiary = "0x4306D7a79265D2cb85Db0c5a55ea5F4f6F73C4B1";
+  const listingId = await listToken(
+    marketplaceAddress,
+    beneficiary,
+    tokenAddress,
+    tokenId,
+    parseEther("0.001")
+  );
+
+  // // Publish a reply cast
+  const link = `https://gag-injection.vercel.app/tokens/${tokenAddress}/${tokenId}`;
   const text = `${caption}\n\n${link}`;
   await publishReplyCast(latestCast.hash, text, imageHttpUrl);
 }
