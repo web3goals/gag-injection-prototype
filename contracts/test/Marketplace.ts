@@ -10,7 +10,7 @@ describe("Marketplace", function () {
       await hre.viem.getWalletClients();
 
     // Deploy contracts
-    const tokenContract = await hre.viem.deployContract("Token", [
+    const tokenFactoryContract = await hre.viem.deployContract("TokenFactory", [
       agent.account.address,
     ]);
     const marketplaceContract = await hre.viem.deployContract(
@@ -23,14 +23,19 @@ describe("Marketplace", function () {
       agent,
       userOne,
       userTwo,
-      tokenContract,
+      tokenFactoryContract,
       marketplaceContract,
     };
   }
 
   it("Should list a token", async function () {
-    const { agent, userOne, userTwo, tokenContract, marketplaceContract } =
-      await loadFixture(initFixture);
+    const {
+      agent,
+      userOne,
+      userTwo,
+      tokenFactoryContract,
+      marketplaceContract,
+    } = await loadFixture(initFixture);
 
     // Save user one balance before test
     const publicClient = await hre.viem.getPublicClient();
@@ -38,14 +43,30 @@ describe("Marketplace", function () {
       address: userOne.account.address,
     });
 
-    // Mint token by agent
+    // Create a token contract
+    const hash = await tokenFactoryContract.write.createToken(
+      ["Gag Injection Token", "MTK"],
+      {
+        account: agent.account,
+      }
+    );
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    const events = await tokenFactoryContract.getEvents.TokenCreated(receipt);
+    expect(events.length).to.equal(1);
+    const token = events[0].args.token;
+    const tokenContract = await hre.viem.getContractAt(
+      "Token",
+      token as `0x${string}`
+    );
+
+    // Mint a token by agent
     await expect(
       tokenContract.write.safeMint([agent.account.address, "ipfs://42"], {
         account: agent.account,
       })
     ).to.be.fulfilled;
 
-    // List token
+    // List the token
     await expect(
       tokenContract.write.approve([marketplaceContract.address, 0n], {
         account: agent.account,
@@ -61,7 +82,7 @@ describe("Marketplace", function () {
       marketplaceContract.address.toLowerCase()
     );
 
-    // Buy token by user two
+    // Buy the token by user two
     await expect(
       marketplaceContract.write.buy([1n], {
         account: userTwo.account,

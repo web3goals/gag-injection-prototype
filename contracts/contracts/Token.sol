@@ -10,8 +10,10 @@ contract Token is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
 
     constructor(
+        string memory name,
+        string memory symbol,
         address initialOwner
-    ) ERC721("Gag Injection Token", "MTK") Ownable(initialOwner) {}
+    ) ERC721(name, symbol) Ownable(initialOwner) {}
 
     function safeMint(
         address to,
