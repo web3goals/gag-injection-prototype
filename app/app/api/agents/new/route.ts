@@ -58,7 +58,6 @@ export async function POST(request: NextRequest) {
       args: ["Injection Gag Token", "IGT"],
     });
     const hash = await walletClient.writeContract(req);
-    console.log({ hash });
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     const logs = parseEventLogs({
       abi: tokenFactoryAbi,
@@ -82,7 +81,6 @@ export async function POST(request: NextRequest) {
 
     const agentId = await insertAgent(agent);
     agent._id = agentId;
-    console.log("Agent is inserted to MongoDB");
 
     // Return the agent
     return createSuccessApiResponse(agent);
