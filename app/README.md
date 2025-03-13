@@ -13,6 +13,7 @@
 ```ini
 NEXT_PUBLIC_PRIVY_APP_ID=""
 MONGODB_URI=""
+AGENT_PRIVATE_KEY=""
 ```
 
 ### How to fix `zustand` error from `@privy-io/react-auth`
