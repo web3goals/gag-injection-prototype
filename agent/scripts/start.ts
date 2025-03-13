@@ -9,83 +9,105 @@ import { createToken, listToken } from "./lib/contracts";
 import { getLatestCast, publishReplyCast } from "./lib/farcaster";
 import { generateCaptionAndPrompt, generateImage } from "./lib/llm";
 import { uploadBase64String, uploadJson } from "./lib/pinata";
-import { findAgent, updateAgent } from "./mongodb/services/agent-service";
+import { Agent } from "./mongodb/models/agent";
+import {
+  findEnabledAgents,
+  updateAgent,
+} from "./mongodb/services/agent-service";
+
+async function processAgent(agent: Agent) {
+  try {
+    console.log(`Processing agent '${agent._id}'...`);
+
+    // Checking the agent
+    if (agent.disabled) {
+      console.log(`Agent '${agent._id}' processing stopped:`, "Agent disabled");
+      return;
+    }
+
+    // Get latest cast
+    const latestCast = await getLatestCast(agent.account);
+
+    // Check if the last cast has been processed by the agent
+    if (agent.posts.find((post) => post.parentHash === latestCast.hash)) {
+      console.log(
+        `Agent '${agent._id}' processing stopped:`,
+        "Latest cast already processed"
+      );
+      return;
+    }
+
+    // Generate a caption and a prompt for image generation
+    const { caption, prompt } = await generateCaptionAndPrompt(
+      latestCast.text,
+      stylesConfig[agent.style]
+    );
+
+    // Generate an image
+    const { base64String: imageBase64String } = await generateImage(prompt);
+
+    // Upload the image to IPFS
+    const { ipfsUrl: imageIpfsUrl, httpUrl: imageHttpUrl } =
+      await uploadBase64String(imageBase64String);
+
+    // Upload a token metadata to IPFS
+    const metadata = {
+      name: caption,
+      image: imageIpfsUrl,
+    };
+    const { ipfsUrl: metadataIpfsUrl } = await uploadJson(metadata);
+
+    // Create a token
+    const tokenId = await createToken(agent.tokenAddress, metadataIpfsUrl);
+
+    // List the token in the marketplace
+    await listToken(
+      agent.creatorAddress,
+      agent.tokenAddress,
+      tokenId,
+      chainConfig.marketplaceListTokenPrice
+    );
+
+    // Publish a reply cast
+    const link = `${siteConfig.url}/tokens/${agent.tokenAddress}/${tokenId}`;
+    const text = `${caption}\n\n${link}`;
+    const publishCastResponse = await publishReplyCast(
+      latestCast.hash,
+      text,
+      imageHttpUrl
+    );
+    const publishedCastHash = publishCastResponse.cast.hash;
+
+    // Save a cash hash in the database
+    await updateAgent({
+      id: agent._id as ObjectId,
+      newPosts: [
+        {
+          hash: publishedCastHash,
+          parentHash: latestCast.hash,
+          createdDate: new Date(),
+        },
+        ...agent.posts,
+      ],
+    });
+
+    console.log(`Agent '${agent._id}' processed`);
+  } catch (error) {
+    console.error(`Failed to process agent '${agent._id}':`, error);
+  }
+}
+
+async function processAgents() {
+  console.log("Processing agents...");
+  const agents = await findEnabledAgents();
+  for (const agent of agents) {
+    await processAgent(agent);
+  }
+}
 
 async function main() {
   console.log("Starting...");
-
-  // Load agent from the database
-  const agentId = "67d2dcb15b45f92cbb34afcd";
-  const agent = await findAgent(new ObjectId(agentId));
-  if (!agent) {
-    throw new Error("Agent undefined");
-  }
-  if (agent.disabled) {
-    throw new Error("Agent disabled");
-  }
-
-  // Get latest cast
-  const latestCast = await getLatestCast(agent.account);
-
-  // Check if the last cast has been processed by the agent
-  if (agent.posts.find((post) => post.parentHash === latestCast.hash)) {
-    throw new Error("Latest cast already processed");
-  }
-
-  // Generate a caption and a prompt for image generation
-  const { caption, prompt } = await generateCaptionAndPrompt(
-    latestCast.text,
-    stylesConfig[agent.style]
-  );
-
-  // Generate an image
-  const { base64String: imageBase64String } = await generateImage(prompt);
-
-  // Upload the image to IPFS
-  const { ipfsUrl: imageIpfsUrl, httpUrl: imageHttpUrl } =
-    await uploadBase64String(imageBase64String);
-
-  // Upload a token metadata to IPFS
-  const metadata = {
-    name: caption,
-    image: imageIpfsUrl,
-  };
-  const { ipfsUrl: metadataIpfsUrl } = await uploadJson(metadata);
-
-  // Create a token
-  const tokenId = await createToken(agent.tokenAddress, metadataIpfsUrl);
-
-  // List the token in the marketplace
-  await listToken(
-    agent.creatorAddress,
-    agent.tokenAddress,
-    tokenId,
-    chainConfig.marketplaceListTokenPrice
-  );
-
-  // Publish a reply cast
-  const link = `${siteConfig.url}/tokens/${agent.tokenAddress}/${tokenId}`;
-  const text = `${caption}\n\n${link}`;
-  const publishCastResponse = await publishReplyCast(
-    latestCast.hash,
-    text,
-    imageHttpUrl
-  );
-  const publishedCastHash = publishCastResponse.cast.hash;
-
-  // Save a cash hash in the database
-  await updateAgent({
-    id: agent._id as ObjectId,
-    newPosts: [
-      {
-        hash: publishedCastHash,
-        parentHash: latestCast.hash,
-        createdDate: new Date(),
-      },
-      ...agent.posts,
-    ],
-  });
-
+  await processAgents();
   process.exit(0);
 }
 

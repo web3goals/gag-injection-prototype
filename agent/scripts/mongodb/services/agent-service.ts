@@ -3,6 +3,11 @@ import { mongoDBConfig } from "../../config/mongodb";
 import clientPromise from "../client";
 import { Agent } from "../models/agent";
 
+export async function findEnabledAgents() {
+  const collection = await getCollectionAgents();
+  return await collection.find({ disabled: false }).toArray();
+}
+
 export async function findAgent(id: ObjectId): Promise<Agent | null> {
   const collection = await getCollectionAgents();
   const tokenIdea = await collection.findOne({ _id: id });
