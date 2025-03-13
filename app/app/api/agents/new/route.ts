@@ -8,6 +8,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { insertAgent } from "@/mongodb/services/agent-service";
 import { NextRequest } from "next/server";
 import {
+  Address,
   createPublicClient,
   createWalletClient,
   Hex,
@@ -20,8 +21,8 @@ import { z } from "zod";
 const requestBodySchema = z.object({
   creatorId: z.string().min(1),
   creatorAddress: z.string().min(1),
-  style: z.string().min(1),
-  network: z.string().min(1),
+  style: z.enum(["KIND_SWEET", "PROVOCATIVE_SARCASTIC"]),
+  network: z.enum(["WARPCAST"]),
   account: z.string().min(1),
 });
 
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     // Create an agent
     const agent: Agent = {
       creatorId: bodyParseResult.data.creatorId,
-      creatorAddress: bodyParseResult.data.creatorAddress,
+      creatorAddress: bodyParseResult.data.creatorAddress as Address,
       createdDate: new Date(),
       style: bodyParseResult.data.style,
       network: bodyParseResult.data.network,

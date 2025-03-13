@@ -34,7 +34,7 @@ export function NewAgentDefineNetworkAccountSection(props: {
   const [isProsessing, setIsProsessing] = useState(false);
 
   const networks = [
-    { id: "WARCAST", title: "Warpcast", disabled: false },
+    { id: "WARPCAST", title: "Warpcast", disabled: false },
     { id: "X", title: "X", disabled: true },
     { id: "INSTAGRAM", title: "Instagram", disabled: true },
   ];
