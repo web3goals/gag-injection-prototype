@@ -50,21 +50,21 @@ export async function POST(request: NextRequest) {
       chain: chainConfig.chain,
       transport: http(),
     });
-    const { request: req } = await publicClient.simulateContract({
+    const { request: createRequest } = await publicClient.simulateContract({
       account: account,
       address: chainConfig.contracts.tokenFactory,
       abi: tokenFactoryAbi,
       functionName: "createToken",
       args: ["Injection Gag Token", "IGT"],
     });
-    const hash = await walletClient.writeContract(req);
+    const hash = await walletClient.writeContract(createRequest);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     const logs = parseEventLogs({
       abi: tokenFactoryAbi,
       eventName: "TokenCreated",
       logs: receipt.logs,
     });
-    const contract = logs[0].args.token;
+    const token = logs[0].args.token;
 
     // Create an agent
     const agent: Agent = {
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       style: bodyParseResult.data.style,
       network: bodyParseResult.data.network,
       account: bodyParseResult.data.account,
-      contract: contract,
+      tokenAddress: token,
       posts: [],
       disabled: false,
     };

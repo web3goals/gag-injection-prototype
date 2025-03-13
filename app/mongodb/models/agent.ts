@@ -8,7 +8,7 @@ export class Agent {
     public style: string,
     public network: string,
     public account: string,
-    public contract: string,
+    public tokenAddress: string,
     public posts: { url: string; createdDate: Date }[],
     public disabled: boolean,
     public _id?: ObjectId
