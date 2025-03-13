@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -15,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import useError from "@/hooks/use-error";
 import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +24,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export function NewAgentDefineNetworkAccountsSection(props: {
+export function NewAgentDefineNetworkAccountSection(props: {
   newAgentRequestData: NewAgentRequestData;
   onNewAgentRequestDataUpdate: (
     newAgentRequestData: NewAgentRequestData
@@ -41,14 +41,14 @@ export function NewAgentDefineNetworkAccountsSection(props: {
 
   const formSchema = z.object({
     network: z.string().min(3),
-    accounts: z.string().min(3),
+    account: z.string().min(3),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       network: "",
-      accounts: "",
+      account: "",
     },
   });
 
@@ -58,7 +58,7 @@ export function NewAgentDefineNetworkAccountsSection(props: {
       props.onNewAgentRequestDataUpdate({
         ...props.newAgentRequestData,
         network: values.network,
-        accounts: values.accounts.split("\n"),
+        account: values.account,
       });
     } catch (error) {
       handleError(error, "Failed to submit the form, try again later");
@@ -114,15 +114,14 @@ export function NewAgentDefineNetworkAccountsSection(props: {
           />
           <FormField
             control={form.control}
-            name="accounts"
+            name="account"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Accounts *</FormLabel>
+                <FormLabel>Account *</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder={"alice\nbob\ncharlie"}
+                  <Input
+                    placeholder="alice"
                     disabled={isProsessing}
-                    rows={5}
                     {...field}
                   />
                 </FormControl>

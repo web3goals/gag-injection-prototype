@@ -12,7 +12,7 @@ const requestBodySchema = z.object({
   creatorAddress: z.string().min(1),
   style: z.string().min(1),
   network: z.string().min(1),
-  accounts: z.array(z.string()),
+  account: z.string().min(1),
 });
 
 export async function POST(request: NextRequest) {
@@ -29,6 +29,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Deploy a token contract
+    // TODO: Implement
+    const contract = "0x0000000000000000000000000000000000000000";
+
     // Create an agent
     const agent: Agent = {
       creatorId: bodyParseResult.data.creatorId,
@@ -36,7 +40,10 @@ export async function POST(request: NextRequest) {
       createdDate: new Date(),
       style: bodyParseResult.data.style,
       network: bodyParseResult.data.network,
-      accounts: bodyParseResult.data.accounts,
+      account: bodyParseResult.data.account,
+      contract: contract,
+      posts: [],
+      disabled: false,
     };
 
     const agentId = await insertAgent(agent);

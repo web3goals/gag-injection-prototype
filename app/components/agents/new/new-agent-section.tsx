@@ -4,7 +4,7 @@ import { Agent } from "@/mongodb/models/agent";
 import { NewAgentRequestData } from "@/types/new-agent-request-data";
 import { useState } from "react";
 import { NewAgentCreatedSection } from "./new-agent-created-section";
-import { NewAgentDefineNetworkAccountsSection } from "./new-agent-define-network-accounts-section";
+import { NewAgentDefineNetworkAccountSection } from "./new-agent-define-network-account-section";
 import { NewAgentDefineStyleSection } from "./new-agent-define-style-section";
 import { NewAgentFinalStepSection } from "./new-agent-final-step-section";
 
@@ -24,9 +24,9 @@ export function NewAgentSection() {
     );
   }
 
-  if (!newAgenRequesttData.network || !newAgenRequesttData.accounts) {
+  if (!newAgenRequesttData.network || !newAgenRequesttData.account) {
     return (
-      <NewAgentDefineNetworkAccountsSection
+      <NewAgentDefineNetworkAccountSection
         newAgentRequestData={newAgenRequesttData}
         onNewAgentRequestDataUpdate={(newAgentRequestData) =>
           setNewAgentRequestData(newAgentRequestData)

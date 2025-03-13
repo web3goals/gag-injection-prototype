@@ -3,5 +3,5 @@ export type NewAgentRequestData = {
   creatorAddress?: string;
   style?: string;
   network?: string;
-  accounts?: string[];
+  account?: string;
 };
