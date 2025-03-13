@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import { Hex } from "viem";
 import TokenFactory from "../artifacts/contracts/TokenFactory.sol/TokenFactory.json";
+import Marketplace from "../artifacts/contracts/Marketplace.sol/Marketplace.json";
 import { injectiveTestnet } from "./data/chains";
 import { CONTRACTS } from "./data/deployed-contracts";
 
@@ -34,6 +35,17 @@ async function deployInjectiveTestnetContracts() {
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     console.log(
       `Contract 'TokenFactory' deployed to: ${receipt.contractAddress}`
+    );
+  }
+  if (!CONTRACTS[network].marketplace) {
+    const hash = await deployer.deployContract({
+      abi: Marketplace.abi,
+      bytecode: Marketplace.bytecode as Hex,
+      args: [],
+    });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    console.log(
+      `Contract 'Marketplace' deployed to: ${receipt.contractAddress}`
     );
   }
 }
