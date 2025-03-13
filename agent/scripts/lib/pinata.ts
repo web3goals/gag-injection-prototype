@@ -1,8 +1,9 @@
 import { PinataSDK } from "pinata";
+import { pinataConfig } from "../config/pinata";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATE_JWT,
-  pinataGateway: "yellow-mute-echidna-168.mypinata.cloud",
+  pinataGateway: pinataConfig.gateway,
 });
 
 export async function uploadBase64String(

@@ -12,7 +12,7 @@ export async function generateCaptionAndPrompt(
     "I want to post a comment on social media with a funny image that will attract a lot of people.",
     "Read the following post and create a caption for a comment and a prompt for DALL-E 3 to create an image.",
     `Comment must be in a ${style} style.`,
-    "Don't use hashtags in the caption.",
+    "Don't use hashtags and quotation mark in the caption.",
     "Post:",
     post,
   ].join("\n");

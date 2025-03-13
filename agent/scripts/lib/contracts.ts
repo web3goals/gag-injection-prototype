@@ -9,16 +9,16 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { marketplaceAbi } from "../abi/marketplace";
 import { tokenAbi } from "../abi/token";
-import { injectiveTestnet } from "../chains/injectiveTestnet";
+import { chainConfig } from "../config/chain";
 
 const account = privateKeyToAccount(process.env.AGENT_PRIVATE_KEY as Hex);
 const publicClient = createPublicClient({
-  chain: injectiveTestnet,
+  chain: chainConfig.chain,
   transport: http(),
 });
 const walletClient = createWalletClient({
   account: account,
-  chain: injectiveTestnet,
+  chain: chainConfig.chain,
   transport: http(),
 });
 
@@ -26,6 +26,7 @@ export async function createToken(
   tokenAddress: Address,
   tokenUri: string
 ): Promise<bigint> {
+  console.log("Creating token...");
   const { request } = await publicClient.simulateContract({
     account: account,
     address: tokenAddress,
@@ -44,19 +45,19 @@ export async function createToken(
 }
 
 export async function listToken(
-  marketplaceAddress: Address,
   beneficiary: Address,
   tokenAddress: Address,
   tokenId: bigint,
   price: bigint
 ): Promise<bigint> {
+  console.log("Listing token...");
   // Approve transfer for the token
   const { request: approveRequest } = await publicClient.simulateContract({
     account: account,
     address: tokenAddress,
     abi: tokenAbi,
     functionName: "approve",
-    args: [marketplaceAddress, tokenId],
+    args: [chainConfig.contracts.marketplace, tokenId],
   });
   const approveHash = await walletClient.writeContract(approveRequest);
   await publicClient.waitForTransactionReceipt({
@@ -65,7 +66,7 @@ export async function listToken(
   // List the token
   const { request: listRequest } = await publicClient.simulateContract({
     account: account,
-    address: marketplaceAddress,
+    address: chainConfig.contracts.marketplace,
     abi: marketplaceAbi,
     functionName: "list",
     args: [beneficiary, tokenAddress, tokenId, price],
