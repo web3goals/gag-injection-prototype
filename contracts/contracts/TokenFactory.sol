@@ -5,8 +5,6 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "./Token.sol";
 
 contract TokenFactory is Ownable {
-    Token[] public tokens;
-
     event TokenCreated(address token);
 
     constructor(address initialOwner) Ownable(initialOwner) {}
