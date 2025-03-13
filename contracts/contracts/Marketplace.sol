@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+// TODO: Add mapping(tokenContract => tokenId => listingId)
 contract Marketplace is ReentrancyGuard {
     struct Listing {
         address seller;
