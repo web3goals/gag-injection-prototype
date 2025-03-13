@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import {
   Address,
   createPublicClient,
@@ -11,8 +10,6 @@ import { privateKeyToAccount } from "viem/accounts";
 import { marketplaceAbi } from "../abi/marketplace";
 import { tokenAbi } from "../abi/token";
 import { injectiveTestnet } from "../chains/injectiveTestnet";
-
-dotenv.config();
 
 const account = privateKeyToAccount(process.env.AGENT_PRIVATE_KEY as Hex);
 const publicClient = createPublicClient({

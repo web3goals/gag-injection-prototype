@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { parseEther } from "viem";
 import { createToken, listToken } from "./lib/contracts";
 import { getLatestCasts, publishReplyCast } from "./lib/farcaster";

@@ -1,8 +1,5 @@
 import { Configuration, NeynarAPIClient } from "@neynar/nodejs-sdk";
 import { CastWithInteractions } from "@neynar/nodejs-sdk/build/api";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const config = new Configuration({
   apiKey: process.env.NEYNAR_API_KEY as string,
