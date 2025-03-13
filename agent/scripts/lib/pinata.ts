@@ -1,16 +1,31 @@
 import { PinataSDK } from "pinata";
 
-const pinataGateway = "yellow-mute-echidna-168.mypinata.cloud";
-
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATE_JWT,
-  pinataGateway: pinataGateway,
+  pinataGateway: "yellow-mute-echidna-168.mypinata.cloud",
 });
 
 export async function uploadBase64String(
   base64String: string
-): Promise<string> {
+): Promise<{ ipfsUrl: string; httpUrl: string }> {
   console.log("Uploading Base64 string...");
   const upload = await pinata.upload.public.base64(base64String);
-  return `https://${pinataGateway}/ipfs/${upload.cid}`;
+  const ipfsUrl = `ipfs://${upload.cid}`;
+  return {
+    ipfsUrl: ipfsUrl,
+    httpUrl: await pinata.gateways.public.convert(ipfsUrl),
+  };
+}
+
+export async function uploadJson(json: object): Promise<{
+  ipfsUrl: string;
+  httpUrl: string;
+}> {
+  console.log("Uploading file...");
+  const upload = await pinata.upload.public.json(json);
+  const ipfsUrl = `ipfs://${upload.cid}`;
+  return {
+    ipfsUrl: ipfsUrl,
+    httpUrl: await pinata.gateways.public.convert(ipfsUrl),
+  };
 }

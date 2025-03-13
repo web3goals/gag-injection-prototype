@@ -61,7 +61,9 @@ export async function generateCaptionAndPrompt(
   return { caption: contentJson.caption, prompt: contentJson.prompt };
 }
 
-export async function generateImage(prompt: string): Promise<string> {
+export async function generateImage(
+  prompt: string
+): Promise<{ base64String: string }> {
   console.log("Generating image...");
 
   const response = await openai.images.generate({
@@ -76,5 +78,5 @@ export async function generateImage(prompt: string): Promise<string> {
   if (!base64String) {
     throw new Error("Failed to generate image, base64String is null");
   }
-  return base64String;
+  return { base64String };
 }

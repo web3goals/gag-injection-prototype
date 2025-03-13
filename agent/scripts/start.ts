@@ -1,6 +1,6 @@
 import { getLatestCasts, publishReplyCast } from "./lib/farcaster";
 import { generateCaptionAndPrompt, generateImage } from "./lib/llm";
-import { uploadBase64String } from "./lib/pinata";
+import { uploadBase64String, uploadJson } from "./lib/pinata";
 
 async function main() {
   console.log("Starting...");
@@ -13,22 +13,35 @@ async function main() {
 
   // Generate a caption and a prompt for image generation
   const styles = ["kind and sweet", "provocative and sarcastic"];
+  const style = styles[0];
   const { caption, prompt } = await generateCaptionAndPrompt(
     latestCast.text,
-    styles[0]
+    style
   );
 
   // Generate an image
-  const imageBase64String = await generateImage(prompt);
+  const { base64String: imageBase64String } = await generateImage(prompt);
 
   // Upload image to IPFS
-  const imageUrl = await uploadBase64String(imageBase64String);
+  const { ipfsUrl: imageIpfsUrl, httpUrl: imageHttpUrl } =
+    await uploadBase64String(imageBase64String);
+
+  // Upload a token metadata to IPFS
+  const { ipfsUrl: metadataIpfsUrl, httpUrl: metadataHttpUrl } =
+    await uploadJson({
+      name: caption,
+      image: imageIpfsUrl,
+    });
+
+  // Create a token
+  // TODO: Implement
 
   // Publish a reply cast
+  const contract = "0x0";
   const token = 42;
-  const link = `https://gag-injection.vercel.app/tokens/${token}`;
+  const link = `https://gag-injection.vercel.app/tokens/${contract}/${token}`;
   const text = `${caption}\n\n${link}`;
-  await publishReplyCast(latestCast.hash, text, imageUrl);
+  await publishReplyCast(latestCast.hash, text, imageHttpUrl);
 }
 
 main().catch((error) => {
