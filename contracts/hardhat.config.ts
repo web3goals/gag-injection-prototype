@@ -21,6 +21,22 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY as string],
     },
   },
+  etherscan: {
+    apiKey: {
+      injectiveTestnet: "empty",
+    },
+    customChains: [
+      {
+        network: "injectiveTestnet",
+        chainId: 999,
+        urls: {
+          apiURL:
+            "https://k8s.testnet.evm.blockscout.api.injective.network/api",
+          browserURL: "https://k8s.testnet.evm.blockscout.injective.network",
+        },
+      },
+    ],
+  },
 };
 
 export default config;
