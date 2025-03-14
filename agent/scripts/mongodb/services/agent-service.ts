@@ -16,7 +16,12 @@ export async function findAgent(id: ObjectId): Promise<Agent | null> {
 
 export async function updateAgent(params: {
   id: ObjectId;
-  newPosts?: { hash: string; parentHash: string; createdDate: Date }[];
+  newPosts?: {
+    token: string;
+    hash: string;
+    parentHash: string;
+    createdDate: Date;
+  }[];
 }) {
   const collection = await getCollectionAgents();
   await collection.updateOne(

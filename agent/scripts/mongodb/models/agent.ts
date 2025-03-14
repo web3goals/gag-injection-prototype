@@ -10,7 +10,12 @@ export class Agent {
     public network: "WARPCAST",
     public account: string,
     public tokenAddress: Address,
-    public posts: { hash: string; parentHash: string; createdDate: Date }[],
+    public posts: {
+      token: string;
+      hash: string;
+      parentHash: string;
+      createdDate: Date;
+    }[],
     public disabled: boolean,
     public _id?: ObjectId
   ) {}

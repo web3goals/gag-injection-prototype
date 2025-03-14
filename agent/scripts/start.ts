@@ -83,6 +83,7 @@ async function processAgent(agent: Agent) {
       id: agent._id as ObjectId,
       newPosts: [
         {
+          token: tokenId.toString(),
           hash: publishedCastHash,
           parentHash: latestCast.hash,
           createdDate: new Date(),
