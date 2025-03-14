@@ -3,13 +3,13 @@ import { tokenAbi } from "@/contracts/abi/token";
 import useError from "@/hooks/use-error";
 import { addressToShortAddress, ipfsUriToHttp } from "@/lib/converters";
 import axios from "axios";
+import { FileDigitIcon, HashIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Address, createPublicClient, http } from "viem";
 import { LoadingSection } from "../loading-section";
 import { Separator } from "../ui/separator";
-import { FileDigitIcon, HashIcon } from "lucide-react";
-import Link from "next/link";
 
 export function TokenSection(props: { address: string; id: string }) {
   const { handleError } = useError();
