@@ -1,13 +1,14 @@
 import { chainConfig } from "@/config/chain";
+import { marketplaceAbi } from "@/contracts/abi/marketplace";
 import { tokenAbi } from "@/contracts/abi/token";
 import useError from "@/hooks/use-error";
 import { addressToShortAddress, ipfsUriToHttp } from "@/lib/converters";
 import axios from "axios";
-import { FileDigitIcon, HashIcon } from "lucide-react";
+import { BadgeDollarSignIcon, FileDigitIcon, HashIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Address, createPublicClient, http } from "viem";
+import { Address, createPublicClient, formatEther, http } from "viem";
 import { LoadingSection } from "../loading-section";
 import { Separator } from "../ui/separator";
 
@@ -15,6 +16,9 @@ export function TokenSection(props: { address: string; id: string }) {
   const { handleError } = useError();
   const [tokenUriData, setTokenUriData] = useState<
     { image: string; name: string } | undefined
+  >();
+  const [tokenListing, setTokenListing] = useState<
+    { listingId: bigint; price: bigint } | undefined
   >();
 
   async function loadTokenUriData() {
@@ -43,8 +47,34 @@ export function TokenSection(props: { address: string; id: string }) {
     }
   }
 
+  async function loadTokenListing() {
+    try {
+      console.log("Loading token listing...");
+      const publicClient = createPublicClient({
+        chain: chainConfig.chain,
+        transport: http(),
+      });
+      const tokenListingId = await publicClient.readContract({
+        address: chainConfig.contracts.marketplace,
+        abi: marketplaceAbi,
+        functionName: "tokenListings",
+        args: [props.address as Address, BigInt(props.id)],
+      });
+      const tokenListing = await publicClient.readContract({
+        address: chainConfig.contracts.marketplace,
+        abi: marketplaceAbi,
+        functionName: "listings",
+        args: [tokenListingId],
+      });
+      setTokenListing({ listingId: tokenListingId, price: tokenListing[4] });
+    } catch (error) {
+      handleError(error, "Failed to load the token listing, try again later");
+    }
+  }
+
   useEffect(() => {
     loadTokenUriData();
+    loadTokenListing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.address, props.id]);
 
@@ -96,10 +126,24 @@ export function TokenSection(props: { address: string; id: string }) {
             <p className="text-sm">#{props.id}</p>
           </div>
         </div>
-        {/* Post */}
-        {/* TODO: */}
         {/* Price */}
-        {/* TODO: */}
+        {tokenListing && (
+          <div className="flex flex-rol gap-2">
+            <div className="flex items-center justify-center size-10 rounded-full bg-primary">
+              <BadgeDollarSignIcon className="size-5 text-primary-foreground" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Price</p>
+              <p className="text-sm">
+                {tokenListing.price === BigInt(0)
+                  ? "NaN"
+                  : formatEther(tokenListing.price) +
+                    " " +
+                    chainConfig.chain.nativeCurrency.symbol}
+              </p>
+            </div>
+          </div>
+        )}
         {/* Buy button */}
         {/* TODO: */}
       </div>
