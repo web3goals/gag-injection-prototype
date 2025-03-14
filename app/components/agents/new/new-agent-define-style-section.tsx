@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
@@ -75,7 +77,7 @@ export function NewAgentDefineStyleSection(props: {
                 className="w-full rounded-xl"
               />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-xl font-extrabold">{style.title}</p>
               <p className="text-sm text-muted-foreground mt-1">
                 {style.description}
