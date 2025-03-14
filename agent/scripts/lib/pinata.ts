@@ -2,7 +2,7 @@ import { PinataSDK } from "pinata";
 import { pinataConfig } from "../config/pinata";
 
 const pinata = new PinataSDK({
-  pinataJwt: process.env.PINATE_JWT,
+  pinataJwt: process.env.PINATA_JWT,
   pinataGateway: pinataConfig.gateway,
 });
 
