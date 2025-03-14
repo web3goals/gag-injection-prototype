@@ -8,6 +8,6 @@ export const CONTRACTS: {
 } = {
   injectiveTestnet: {
     tokenFactory: "0x02008a8dbc938bd7930bf370617065b6b0c1221a",
-    marketplace: "0xfe0aed5cbee89869ff505e10a5ebb75e9fc819d7",
+    marketplace: "0x7aba7ff10bc3db6fa82d6b23f5492a7f274101f2",
   },
 };

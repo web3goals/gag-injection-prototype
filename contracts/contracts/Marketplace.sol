@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-// TODO: Add mapping(tokenContract => tokenId => listingId)
 contract Marketplace is ReentrancyGuard {
     struct Listing {
         address seller;
@@ -15,6 +14,8 @@ contract Marketplace is ReentrancyGuard {
     }
 
     mapping(uint256 => Listing) public listings;
+    mapping(address tokenContract => mapping(uint256 tokenId => uint256 listingId))
+        public tokenListings;
     uint256 private listingCounter;
 
     event Listed(
@@ -46,6 +47,8 @@ contract Marketplace is ReentrancyGuard {
             price
         );
 
+        tokenListings[tokenContract][tokenId] = listingCounter;
+
         emit Listed(
             listingCounter,
             msg.sender,
@@ -62,6 +65,7 @@ contract Marketplace is ReentrancyGuard {
         require(listing.seller != address(0), "Listing does not exist");
 
         delete listings[listingId];
+        delete tokenListings[listing.tokenContract][listing.tokenId];
         payable(listing.beneficiary).transfer(msg.value);
         IERC721(listing.tokenContract).transferFrom(
             address(this),
@@ -77,6 +81,7 @@ contract Marketplace is ReentrancyGuard {
         require(listing.seller == msg.sender, "Not the seller");
 
         delete listings[listingId];
+        delete tokenListings[listing.tokenContract][listing.tokenId];
         IERC721(listing.tokenContract).transferFrom(
             address(this),
             msg.sender,
