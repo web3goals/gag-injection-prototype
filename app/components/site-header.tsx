@@ -1,8 +1,16 @@
 "use client";
 
 import { siteConfig } from "@/config/site";
+import { privyUserToEmail } from "@/lib/converters";
 import { usePrivy } from "@privy-io/react-auth";
-import { GithubIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import {
+  BotIcon,
+  Building2Icon,
+  GithubIcon,
+  LogInIcon,
+  LogOutIcon,
+  MenuIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -13,7 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { privyUserToEmail } from "@/lib/converters";
 
 export function SiteHeader() {
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -57,15 +64,29 @@ export function SiteHeader() {
                 </DropdownMenuItem>
               )}
               {ready && authenticated && (
-                <DropdownMenuItem onClick={() => logout()}>
-                  <LogOutIcon />
-                  <span>
-                    Logout{" "}
-                    <p className="text-xs text-muted-foreground">
-                      {privyUserToEmail(user)}
-                    </p>
-                  </span>
-                </DropdownMenuItem>
+                <>
+                  <Link href="/agents/new">
+                    <DropdownMenuItem>
+                      <BotIcon />
+                      <span>Hire agent</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/agents">
+                    <DropdownMenuItem>
+                      <Building2Icon />
+                      <span>Hired agents</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem onClick={() => logout()}>
+                    <LogOutIcon />
+                    <span>
+                      Logout{" "}
+                      <p className="text-xs text-muted-foreground">
+                        {privyUserToEmail(user)}
+                      </p>
+                    </span>
+                  </DropdownMenuItem>
+                </>
               )}
               <DropdownMenuSeparator />
               <Link href={siteConfig.links.github} target="_blank">
