@@ -17,7 +17,7 @@ export function AgentsSection() {
   const { handleError } = useError();
   const [agents, setAgents] = useState<Agent[] | undefined>();
 
-  useEffect(() => {
+  async function loadAgents() {
     if (user?.id) {
       axios
         .get("/api/agents", { params: { creatorId: user.id } })
@@ -26,6 +26,10 @@ export function AgentsSection() {
           handleError(error, "Failed to load agents, try again later")
         );
     }
+  }
+
+  useEffect(() => {
+    loadAgents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -50,7 +54,11 @@ export function AgentsSection() {
         <EntityList<Agent>
           entities={agents}
           renderEntityCard={(agent, index) => (
-            <AgentCard key={index} agent={agent} />
+            <AgentCard
+              key={index}
+              agent={agent}
+              onAgentUpdate={() => loadAgents()}
+            />
           )}
           noEntitiesText="No hired agents yet..."
         />

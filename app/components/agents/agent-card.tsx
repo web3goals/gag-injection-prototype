@@ -6,12 +6,14 @@ import { marketplaceAbi } from "@/contracts/abi/marketplace";
 import useError from "@/hooks/use-error";
 import { addressToShortAddress } from "@/lib/converters";
 import { Agent } from "@/mongodb/models/agent";
+import axios from "axios";
 import {
   CalendarIcon,
   CircleOffIcon,
   DramaIcon,
   FileDigitIcon,
   GlobeIcon,
+  Loader2Icon,
   UserRoundIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -30,8 +32,9 @@ import {
   TableRow,
 } from "../ui/table";
 
-export function AgentCard(props: { agent: Agent }) {
+export function AgentCard(props: { agent: Agent; onAgentUpdate: () => void }) {
   const { handleError } = useError();
+  const [isProsessing, setIsProsessing] = useState(false);
   const [tokenSales, setTokenSales] = useState<
     Map<bigint, bigint> | undefined
   >();
@@ -87,7 +90,21 @@ export function AgentCard(props: { agent: Agent }) {
 
       setTokenSales(tokenSales);
     } catch (error) {
-      handleError(error, "Failed to submit the form, try again later");
+      handleError(error, "Failed to load token sales, try again later");
+    }
+  }
+
+  async function handleFireAgent() {
+    try {
+      console.log("Handling fire agent...");
+      setIsProsessing(true);
+      await axios.post("/api/agents/firing", {
+        id: props.agent._id?.toString(),
+      });
+      props.onAgentUpdate();
+      toast("Agent fired 🎉");
+    } catch (error) {
+      handleError(error, "Failed to fire the agent, try again later");
     }
   }
 
@@ -239,13 +256,18 @@ export function AgentCard(props: { agent: Agent }) {
           </TableBody>
         </Table>
         {/* Fire button */}
-        {/* TODO: Implement */}
         <Button
           variant="destructive"
-          onClick={() => toast.info("Not implemented")}
+          disabled={isProsessing}
+          onClick={() => handleFireAgent()}
           className="mt-12"
         >
-          <CircleOffIcon /> Fire agent
+          {isProsessing ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <CircleOffIcon />
+          )}
+          Fire agent
         </Button>
       </div>
     </div>

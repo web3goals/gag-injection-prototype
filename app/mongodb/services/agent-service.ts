@@ -18,6 +18,21 @@ export async function insertAgent(agent: Agent): Promise<ObjectId> {
   return insertOneResult.insertedId;
 }
 
+export async function updateAgent(params: {
+  id: ObjectId;
+  disabled?: boolean;
+}) {
+  const collection = await getCollectionAgents();
+  await collection.updateOne(
+    { _id: params.id },
+    {
+      $set: {
+        ...(params.disabled && { disabled: params.disabled }),
+      },
+    }
+  );
+}
+
 async function getCollectionAgents(): Promise<Collection<Agent>> {
   const client = await clientPromise;
   const db = client.db(mongoDBConfig.database);
