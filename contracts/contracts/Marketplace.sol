@@ -26,7 +26,15 @@ contract Marketplace is ReentrancyGuard {
         uint256 tokenId,
         uint256 price
     );
-    event Sold(uint256 indexed listingId, address indexed buyer);
+    event Sold(
+        uint256 indexed listingId,
+        address indexed seller,
+        address beneficiary,
+        address indexed tokenContract,
+        uint256 tokenId,
+        uint256 price,
+        address buyer
+    );
     event ListingCancelled(uint256 indexed listingId);
 
     function list(
@@ -73,7 +81,15 @@ contract Marketplace is ReentrancyGuard {
             listing.tokenId
         );
 
-        emit Sold(listingId, msg.sender);
+        emit Sold(
+            listingId,
+            listing.seller,
+            listing.beneficiary,
+            listing.tokenContract,
+            listing.tokenId,
+            listing.price,
+            msg.sender
+        );
     }
 
     function cancelListing(uint256 listingId) external nonReentrant {
