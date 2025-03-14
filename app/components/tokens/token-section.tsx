@@ -202,7 +202,7 @@ export function TokenSection(props: { address: string; id: string }) {
       <Separator className="my-8" />
       <div className="flex flex-col gap-6">
         {/* Token address */}
-        <div className="flex flex-rol gap-2">
+        <div className="flex flex-rol gap-3">
           <div className="flex items-center justify-center size-10 rounded-full bg-primary">
             <FileDigitIcon className="size-5 text-primary-foreground" />
           </div>
@@ -219,7 +219,7 @@ export function TokenSection(props: { address: string; id: string }) {
           </div>
         </div>
         {/* Token ID */}
-        <div className="flex flex-rol gap-2">
+        <div className="flex flex-rol gap-3">
           <div className="flex items-center justify-center size-10 rounded-full bg-primary">
             <HashIcon className="size-5 text-primary-foreground" />
           </div>
@@ -229,7 +229,7 @@ export function TokenSection(props: { address: string; id: string }) {
           </div>
         </div>
         {/* Owner */}
-        <div className="flex flex-rol gap-2">
+        <div className="flex flex-rol gap-3">
           <div className="flex items-center justify-center size-10 rounded-full bg-primary">
             <UserRoundIcon className="size-5 text-primary-foreground" />
           </div>
@@ -246,7 +246,7 @@ export function TokenSection(props: { address: string; id: string }) {
           </div>
         </div>
         {/* Price */}
-        <div className="flex flex-rol gap-2">
+        <div className="flex flex-rol gap-3">
           <div className="flex items-center justify-center size-10 rounded-full bg-primary">
             <BadgeDollarSignIcon className="size-5 text-primary-foreground" />
           </div>
