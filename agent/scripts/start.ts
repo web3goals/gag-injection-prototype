@@ -108,8 +108,13 @@ async function processAgents() {
 
 async function main() {
   console.log("Starting...");
-  await processAgents();
-  process.exit(0);
+
+  const minute = 60 * 1000;
+  const interval = 60 * minute;
+
+  setInterval(async () => {
+    processAgents();
+  }, interval);
 }
 
 main().catch((error) => {
