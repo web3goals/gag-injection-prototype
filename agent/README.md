@@ -3,7 +3,11 @@
 ### Commands
 
 - Install dependencies - `npm install`
-- Start agent - `npm run start`
+- Start the agent - `npm run start`
+- Start a screen session - `screen -S agent`
+- Detach from a session - `Press Ctrl + A, then D`
+- List sessions - `screen -ls`
+- Reattach session - `screen -r agent`
 
 ## Example of `.env`
 
