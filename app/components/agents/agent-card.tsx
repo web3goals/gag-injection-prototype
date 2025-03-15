@@ -81,7 +81,10 @@ export function AgentCard(props: { agent: Agent; onAgentUpdate: () => void }) {
           },
         });
         for (const event of events) {
-          if (event.args.tokenId && event.args.price) {
+          if (
+            event.args.tokenId !== undefined &&
+            event.args.price !== undefined
+          ) {
             tokenSales.set(event.args.tokenId, event.args.price);
           }
         }
