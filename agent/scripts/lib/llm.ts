@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { logger } from "./logger";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -6,7 +7,7 @@ export async function generateCaptionAndPrompt(
   post: string,
   style: string
 ): Promise<{ caption: string; prompt: string }> {
-  console.log("Generating caption and prompt...");
+  logger.info("Generating caption and prompt...");
 
   const prompt = [
     "I want to post a comment on social media with a funny image that will attract a lot of people.",
@@ -61,7 +62,7 @@ export async function generateCaptionAndPrompt(
 export async function generateImage(
   prompt: string
 ): Promise<{ base64String: string }> {
-  console.log("Generating image...");
+  logger.info("Generating image...");
 
   const response = await openai.images.generate({
     model: "dall-e-3",

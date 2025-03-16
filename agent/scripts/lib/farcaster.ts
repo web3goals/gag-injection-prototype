@@ -3,6 +3,7 @@ import {
   CastWithInteractions,
   PostCastResponse,
 } from "@neynar/nodejs-sdk/build/api";
+import { logger } from "./logger";
 
 const config = new Configuration({
   apiKey: process.env.NEYNAR_API_KEY as string,
@@ -13,7 +14,7 @@ const client = new NeynarAPIClient(config);
 export async function getLatestCast(
   username: string
 ): Promise<CastWithInteractions> {
-  console.log("Getting latest cast...");
+  logger.info("Getting latest cast...");
   const userResponse = await client.lookupUserByUsername({ username });
   const feedResponse = await client.fetchCastsForUser({
     fid: userResponse.user.fid,
@@ -27,7 +28,7 @@ export async function publishReplyCast(
   text: string,
   image: string
 ): Promise<PostCastResponse> {
-  console.log("Publishing reply cast...");
+  logger.info("Publishing reply cast...");
   return await client.publishCast({
     signerUuid: process.env.AGENT_SIGNER_UUID as string,
     text: text,

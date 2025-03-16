@@ -10,6 +10,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { marketplaceAbi } from "../abi/marketplace";
 import { tokenAbi } from "../abi/token";
 import { chainConfig } from "../config/chain";
+import { logger } from "./logger";
 
 const account = privateKeyToAccount(process.env.AGENT_PRIVATE_KEY as Hex);
 const publicClient = createPublicClient({
@@ -26,7 +27,7 @@ export async function createToken(
   tokenAddress: Address,
   tokenUri: string
 ): Promise<bigint> {
-  console.log("Creating token...");
+  logger.info("Creating token...");
   const { request } = await publicClient.simulateContract({
     account: account,
     address: tokenAddress,
@@ -50,7 +51,7 @@ export async function listToken(
   tokenId: bigint,
   price: bigint
 ): Promise<bigint> {
-  console.log("Listing token...");
+  logger.info("Listing token...");
   // Approve transfer for the token
   const { request: approveRequest } = await publicClient.simulateContract({
     account: account,

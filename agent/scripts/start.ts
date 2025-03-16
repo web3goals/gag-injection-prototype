@@ -8,6 +8,7 @@ import { stylesConfig } from "./config/styles";
 import { createToken, listToken } from "./lib/contracts";
 import { getLatestCast, publishReplyCast } from "./lib/farcaster";
 import { generateCaptionAndPrompt, generateImage } from "./lib/llm";
+import { logger } from "./lib/logger"; // Update this line
 import { uploadBase64String, uploadJson } from "./lib/pinata";
 import { Agent } from "./mongodb/models/agent";
 import {
@@ -17,11 +18,11 @@ import {
 
 async function processAgent(agent: Agent) {
   try {
-    console.log(`Processing agent '${agent._id}'...`);
+    logger.info(`Processing agent '${agent._id}'...`);
 
     // Checking the agent
     if (agent.disabled) {
-      console.log(`Agent '${agent._id}' processing stopped:`, "Agent disabled");
+      logger.info(`Agent '${agent._id}' processing stopped: Agent disabled`);
       return;
     }
 
@@ -30,9 +31,8 @@ async function processAgent(agent: Agent) {
 
     // Check if the last cast has been processed by the agent
     if (agent.posts.find((post) => post.parentHash === latestCast.hash)) {
-      console.log(
-        `Agent '${agent._id}' processing stopped:`,
-        "Latest cast already processed"
+      logger.info(
+        `Agent '${agent._id}' processing stopped: Latest cast already processed`
       );
       return;
     }
@@ -92,14 +92,14 @@ async function processAgent(agent: Agent) {
       ],
     });
 
-    console.log(`Agent '${agent._id}' processed`);
+    logger.info(`Agent '${agent._id}' processed`);
   } catch (error) {
-    console.error(`Failed to process agent '${agent._id}':`, error);
+    logger.error(`Failed to process agent '${agent._id}': ${error}`);
   }
 }
 
 async function processAgents() {
-  console.log("Processing agents...");
+  logger.info("Processing agents...");
   const agents = await findEnabledAgents();
   for (const agent of agents) {
     await processAgent(agent);
@@ -107,7 +107,7 @@ async function processAgents() {
 }
 
 async function main() {
-  console.log("Starting...");
+  logger.info("Starting...");
 
   const minute = 60 * 1000;
   const interval = 60 * minute;
@@ -118,6 +118,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error);
+  logger.error(error);
   process.exitCode = 1;
 });

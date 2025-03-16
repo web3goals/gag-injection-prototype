@@ -1,5 +1,6 @@
 import { PinataSDK } from "pinata";
 import { pinataConfig } from "../config/pinata";
+import { logger } from "./logger";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
@@ -9,7 +10,7 @@ const pinata = new PinataSDK({
 export async function uploadBase64String(
   base64String: string
 ): Promise<{ ipfsUrl: string; httpUrl: string }> {
-  console.log("Uploading Base64 string...");
+  logger.info("Uploading Base64 string...");
   const upload = await pinata.upload.public.base64(base64String);
   const ipfsUrl = `ipfs://${upload.cid}`;
   return {
@@ -22,7 +23,7 @@ export async function uploadJson(json: object): Promise<{
   ipfsUrl: string;
   httpUrl: string;
 }> {
-  console.log("Uploading file...");
+  logger.info("Uploading file...");
   const upload = await pinata.upload.public.json(json);
   const ipfsUrl = `ipfs://${upload.cid}`;
   return {

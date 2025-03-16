@@ -5,6 +5,7 @@
     "start": "ts-node ./scripts/start.ts"
   },
   "devDependencies": {
+    "@types/winston": "^2.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
@@ -14,6 +15,7 @@
     "mongodb": "^6.14.2",
     "openai": "^4.86.2",
     "pinata": "^2.0.1",
-    "viem": "^2.23.10"
+    "viem": "^2.23.10",
+    "winston": "^3.17.0"
   }
 }
